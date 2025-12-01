@@ -16,6 +16,7 @@ import { useDropdownEditField, usePlugins } from 'utils/hooks';
 import { CombinedState } from 'reducers';
 import { exportActions } from 'actions/export-actions';
 import { importActions } from 'actions/import-actions';
+import { augmentationActions } from 'actions/augmentation-actions';
 import { modelsActions } from 'actions/models-actions';
 import { mergeConsensusJobsAsync } from 'actions/consensus-actions';
 
@@ -106,6 +107,13 @@ function TaskActionsComponent(props: Readonly<Props>): JSX.Element {
     const onUploadAnnotations = useCallback(() => {
         dispatch(importActions.openImportDatasetModal(taskInstance));
     }, [taskInstance]);
+
+    const onAugmentDataset = useCallback(() => {
+        const tasksToAugment = isBulkMode ?
+            currentTasks.filter((task) => selectedIds.includes(task.id)) :
+            [taskInstance];
+        dispatch(augmentationActions.openAugmentModal(tasksToAugment));
+    }, [taskInstance, isBulkMode, currentTasks, selectedIds]);
 
     const onRunAutoAnnotation = useCallback(() => {
         dispatch(modelsActions.showRunModelDialog(taskInstance));
@@ -260,6 +268,7 @@ function TaskActionsComponent(props: Readonly<Props>): JSX.Element {
             onOpenBugTracker: taskInstance.bugTracker ? onOpenBugTracker : null,
             onUploadAnnotations,
             onExportDataset,
+            onAugmentDataset,
             onBackupTask,
             onRunAutoAnnotation,
             onMoveTaskToProject,

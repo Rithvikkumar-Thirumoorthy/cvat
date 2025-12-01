@@ -110,3 +110,22 @@ DEFAULT_DB_BULK_CREATE_BATCH_SIZE = int(os.getenv("CVAT_DEFAULT_DB_BULK_CREATE_B
 DEFAULT_DB_ANNO_CHUNK_SIZE = int(os.getenv("CVAT_DEFAULT_DB_ANNO_CHUNK_SIZE", 2000))
 
 MAX_JOBS_PER_TASK = int(os.getenv("CVAT_MAX_JOBS_PER_TASK", 5_000))
+
+# Data Augmentation Settings
+AUGMENTATION_STORAGE_PATH = os.getenv("CVAT_AUGMENTATION_PATH", "/cvat-data/augmented_datasets")
+"""
+Base storage path for augmented datasets.
+Augmented datasets will be stored in subdirectories under this path.
+"""
+
+AUGMENTATION_TTL_DAYS = int(os.getenv("CVAT_AUGMENTATION_TTL_DAYS", 7))
+"""
+Time-to-live for augmented datasets in days.
+Datasets older than this will be eligible for cleanup.
+"""
+
+AUGMENTATION_MAX_COPIES = int(os.getenv("CVAT_AUGMENTATION_MAX_COPIES", 10))
+"""
+Maximum number of augmented copies allowed per image.
+This prevents excessive resource usage.
+"""

@@ -202,6 +202,17 @@ export interface ImportState {
     instanceType: 'project' | 'task' | 'job' | null;
 }
 
+export interface AugmentationState {
+    modal: {
+        visible: boolean;
+        instances: (Project | Task)[] | null;
+    };
+    stats: {
+        fetching: boolean;
+        data: any[];
+    };
+}
+
 export interface ConsensusState {
     fetching: boolean;
     consensusSettings: ConsensusSettings | null;
@@ -1156,6 +1167,7 @@ export interface CombinedState {
     review: ReviewState;
     export: ExportState;
     import: ImportState;
+    augmentation: AugmentationState;
     consensus: ConsensusState;
     cloudStorages: CloudStoragesState;
     organizations: OrganizationState;

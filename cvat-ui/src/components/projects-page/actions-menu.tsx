@@ -15,6 +15,7 @@ import { deleteProjectAsync, getProjectsAsync, updateProjectAsync } from 'action
 import { cloudStoragesActions } from 'actions/cloud-storage-actions';
 import { exportActions } from 'actions/export-actions';
 import { importActions } from 'actions/import-actions';
+import { augmentationActions } from 'actions/augmentation-actions';
 import UserSelector from 'components/task-page/user-selector';
 import OrganizationSelector from 'components/selectors/organization-selector';
 import { ResourceUpdateTypes } from 'utils/enums';
@@ -70,6 +71,13 @@ function ProjectActionsComponent(props: Readonly<Props>): JSX.Element {
     const onImportDataset = useCallback(() => {
         dispatch(importActions.openImportDatasetModal(projectInstance));
     }, [projectInstance]);
+
+    const onAugmentDataset = useCallback(() => {
+        const projectsToAugment = isBulkMode ?
+            currentProjects.filter((project) => selectedIds.includes(project.id)) :
+            [projectInstance];
+        dispatch(augmentationActions.openAugmentModal(projectsToAugment));
+    }, [projectInstance, isBulkMode, currentProjects, selectedIds]);
 
     const onBackupProject = useCallback(() => {
         dispatch(exportActions.openExportBackupModal(projectInstance));
@@ -211,6 +219,7 @@ function ProjectActionsComponent(props: Readonly<Props>): JSX.Element {
             pluginActions,
             onExportDataset,
             onImportDataset,
+            onAugmentDataset,
             onBackupProject,
             onDeleteProject,
             selectedIds,

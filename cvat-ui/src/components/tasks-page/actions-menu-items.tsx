@@ -20,6 +20,7 @@ interface MenuItemsData {
     onOpenBugTracker: (() => void) | null;
     onUploadAnnotations: () => void;
     onExportDataset: () => void;
+    onAugmentDataset: () => void;
     onBackupTask: () => void;
     onRunAutoAnnotation: (() => void) | null;
     onMoveTaskToProject: () => void;
@@ -28,7 +29,7 @@ interface MenuItemsData {
     selectedIds: number[];
 }
 
-const bulkAllowedKeys = ['edit_assignee', 'backup_task', 'export_task_dataset', 'delete_task', 'edit_organization'];
+const bulkAllowedKeys = ['edit_assignee', 'backup_task', 'export_task_dataset', 'augment_dataset', 'delete_task', 'edit_organization'];
 
 export default function TaskActionsItems(menuItemsData: MenuItemsData, taskMenuProps: unknown): MenuProps['items'] {
     const {
@@ -43,6 +44,7 @@ export default function TaskActionsItems(menuItemsData: MenuItemsData, taskMenuP
         onMergeConsensusJobs,
         onUploadAnnotations,
         onExportDataset,
+        onAugmentDataset,
         onOpenBugTracker,
         onBackupTask,
         onRunAutoAnnotation,
@@ -68,6 +70,13 @@ export default function TaskActionsItems(menuItemsData: MenuItemsData, taskMenuP
         label: withCount('Export task dataset', 'export_task_dataset'),
         disabled: isDisabled('export_task_dataset'),
     }, 10]);
+
+    menuItems.push([{
+        key: 'augment_dataset',
+        onClick: onAugmentDataset,
+        label: withCount('Augment dataset', 'augment_dataset'),
+        disabled: isDisabled('augment_dataset'),
+    }, 15]);
 
     if (onOpenBugTracker) {
         menuItems.push([{

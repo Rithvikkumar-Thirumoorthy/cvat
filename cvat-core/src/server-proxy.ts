@@ -2327,6 +2327,114 @@ async function createAsset(file: File, guideId: number): Promise<SerializedAsset
     }
 }
 
+// Data Augmentation API
+async function createAugmentation(
+    instanceType: 'projects' | 'tasks',
+    id: number,
+    augmentations: Array<{type: string; params?: Record<string, any>}>,
+    copiesPerImage: number,
+    filename?: string,
+): Promise<string> {
+    const { backendAPI } = config;
+
+    const requestData: any = {
+        augmentations,
+        copies_per_image: copiesPerImage,
+    };
+
+    if (instanceType === 'tasks') {
+        requestData.task_ids = [id];
+    } else {
+        requestData.project_ids = [id];
+    }
+
+    if (filename) {
+        requestData.filename = filename;
+    }
+
+    try {
+        const response = await Axios.post(`${backendAPI}/augmentation/datasets`, requestData, {
+            params: enableOrganization(),
+        });
+        return response.data.rq_id;
+    } catch (errorData) {
+        throw generateError(errorData);
+    }
+}
+
+async function listAugmentations(
+    taskId?: number,
+    projectId?: number,
+): Promise<any[]> {
+    const { backendAPI } = config;
+    const params: any = {
+        ...enableOrganization(),
+    };
+
+    if (taskId) {
+        params.task_id = taskId;
+    }
+    if (projectId) {
+        params.project_id = projectId;
+    }
+
+    try {
+        const response = await Axios.get(`${backendAPI}/augmentation/datasets/list`, {
+            params,
+        });
+        return response.data;
+    } catch (errorData) {
+        throw generateError(errorData);
+    }
+}
+
+async function getAugmentationStats(id: string): Promise<any> {
+    const { backendAPI } = config;
+
+    try {
+        const response = await Axios.get(`${backendAPI}/augmentation/datasets/${id}/stats`, {
+            params: enableOrganization(),
+        });
+        return response.data;
+    } catch (errorData) {
+        throw generateError(errorData);
+    }
+}
+
+async function downloadAugmentation(id: string): Promise<void> {
+    const { backendAPI } = config;
+
+    try {
+        const response = await Axios.get(`${backendAPI}/augmentation/datasets/${id}/download`, {
+            params: enableOrganization(),
+            responseType: 'blob',
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `augmented_dataset_${id}.zip`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+    } catch (errorData) {
+        throw generateError(errorData);
+    }
+}
+
+async function deleteAugmentation(id: string): Promise<void> {
+    const { backendAPI } = config;
+
+    try {
+        await Axios.delete(`${backendAPI}/augmentation/datasets/${id}`, {
+            params: enableOrganization(),
+        });
+    } catch (errorData) {
+        throw generateError(errorData);
+    }
+}
+
 async function getQualitySettings(
     filter: APIQualitySettingsFilter,
     aggregate?: boolean,
@@ -2646,5 +2754,13 @@ export default Object.freeze({
         list: getRequestsList,
         status: getRequestStatus,
         cancel: cancelRequest,
+    }),
+
+    augmentation: Object.freeze({
+        createAugmentation,
+        listAugmentations,
+        getAugmentationStats,
+        downloadAugmentation,
+        deleteAugmentation,
     }),
 });

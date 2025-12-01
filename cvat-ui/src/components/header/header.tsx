@@ -464,6 +464,18 @@ function HeaderComponent(props: Props): JSX.Element {
                 >
                     Requests
                 </Button>
+                <Button
+                    className={getButtonClassName('augmentation')}
+                    type='link'
+                    value='augmentation'
+                    href='/augmentation'
+                    onClick={(event: React.MouseEvent): void => {
+                        event.preventDefault();
+                        history.push('/augmentation');
+                    }}
+                >
+                    Data Augmentation
+                </Button>
                 {isModelsPluginActive ? (
                     <Button
                         className={getButtonClassName('models')}

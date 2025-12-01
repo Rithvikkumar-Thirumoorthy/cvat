@@ -15,6 +15,7 @@ interface MenuItemsData {
     pluginActions: ReturnType<typeof usePlugins>;
     onExportDataset: () => void;
     onImportDataset: () => void;
+    onAugmentDataset: () => void;
     onBackupProject: () => void;
     onDeleteProject: () => void;
     selectedIds: number[];
@@ -30,13 +31,14 @@ export default function ProjectActionsItems(
         pluginActions,
         onExportDataset,
         onImportDataset,
+        onAugmentDataset,
         onBackupProject,
         onDeleteProject,
         selectedIds = [],
     } = menuItemsData;
 
     const isBulkMode = selectedIds.length > 1;
-    const bulkAllowedKeys = ['edit_assignee', 'backup-project', 'export-dataset', 'delete'];
+    const bulkAllowedKeys = ['edit_assignee', 'backup-project', 'export-dataset', 'augment-dataset', 'delete'];
     const isDisabled = (key: string): boolean => isBulkMode && !bulkAllowedKeys.includes(key);
     const withCount = LabelWithCountHOF(selectedIds, bulkAllowedKeys);
 
@@ -55,6 +57,13 @@ export default function ProjectActionsItems(
         label: 'Import dataset',
         disabled: isDisabled('import-dataset'),
     }, 10]);
+
+    menuItems.push([{
+        key: 'augment-dataset',
+        onClick: onAugmentDataset,
+        label: withCount('Augment dataset', 'augment-dataset'),
+        disabled: isDisabled('augment-dataset'),
+    }, 15]);
 
     menuItems.push([{
         key: 'backup-project',
